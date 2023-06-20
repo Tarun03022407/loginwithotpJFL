@@ -4,7 +4,8 @@ var uuid = require('uuid');
 var url = require('url');
 
 function isUserExistFun(userData,request,response){
- 
+ console.log(request, 'comming request')
+ console.log(userData, 'userData')
 
   var subdomain = 'pdi-xoogle';
   var shared_key = 'Cxvpq1neQYqKzaB9XVIoYlTa7hZGB2WaorLPa9JTXag0ZOhD';
@@ -12,7 +13,7 @@ function isUserExistFun(userData,request,response){
     var payload = {
       iat: (new Date().getTime() / 1000),
       jti: uuid.v4(),
-    //    name: 'Harshit Srivastava',
+        name: 'Harshit Srivastava',
         email: 'harshit@xoogle.in'
     };
   
