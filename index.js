@@ -1,59 +1,78 @@
-// const express = require('express')
-// const app = express();
-// app.use(express.json());
-// const { connection } = require("./configs/db");
-
-
-// app.get("/",function(req,res){
-  
-//   res.send("welcome to home")
-// })
-
-// app.listen(process.env.port, async () => {
-//     try {
-//       await connection;
-//       // console.log(connection);
-//       console.log("connected to db");
-//     } catch (error) {
-//       console.log(error.message);
-//       // res.send("something went wrong")
-//     }
-//     console.log(`server running at ${process.env.port} `);
-//   });
-  
-
 var http = require('http');
 var jwt = require('jwt-simple');
 var uuid = require('uuid');
 var url = require('url');
 
-var subdomain = 'pdi-xoogle';
-var shared_key = 'Cxvpq1neQYqKzaB9XVIoYlTa7hZGB2WaorLPa9JTXag0ZOhD';
+function isUserExistFun(userData,request,response){
+ 
 
-http.createServer(function (request, response) {
-  var payload = {
-    iat: (new Date().getTime() / 1000),
-    jti: uuid.v4(),
-      name: 'Harshit Srivastava',
-    email: 'harshit@xoogle.in'
-  };
+  var subdomain = 'pdi-xoogle';
+  var shared_key = 'Cxvpq1neQYqKzaB9XVIoYlTa7hZGB2WaorLPa9JTXag0ZOhD';
 
-  // encode
-  var token = jwt.encode(payload, shared_key);
-  console.log("token",token)
-  var redirect = 'https://' + subdomain + '.zendesk.com/access/jwt?jwt=' + token;
-  console.log("redirect",redirect)
+    var payload = {
+      iat: (new Date().getTime() / 1000),
+      jti: uuid.v4(),
+    //    name: 'Harshit Srivastava',
+        email: 'harshit@xoogle.in'
+    };
+  
+    // encode
+    var token = jwt.encode(payload, shared_key);
+    console.log("token",token)
+    var redirect = 'https://' + subdomain + '.zendesk.com/access/jwt?jwt=' + token;
+    console.log("redirect",redirect)
 
-  var query = url.parse(request.url, true).query;
+    var query = url.parse(request.url, true).query;
 
-  if(query['return_to']) {
-    redirect += '&return_to=' + encodeURIComponent(query['return_to']);
+    if(query['return_to']) {
+      redirect += '&return_to=' + encodeURIComponent(query['return_to']);
+    }
+
+    response.writeHead(302, {
+      'Location': redirect
+    });
+    response.end();
+}
+
+const userData = [
+  {phone:9453841101, name:'Harshit Srivastava'},
+  {phone:9911130560, name:'saroj'}
+]
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+app.use(express.static(__dirname + '/public'));
+const port = 3000
+app.use(bodyParser.json({limit:'30mb'}))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true}));
+app.set('view engine', 'ejs');
+
+
+app.get('/otpGet', (req, res) => {
+  res.render('otp');
+})
+
+app.post('/otpGetData', (req, res) => {
+  console.log(req.body);
+  //res.render('varifyOtp');
+  let phoneNo = req.body.phoneNo;
+  const isMobileExists = userData.find((element)=> element.phone == phoneNo);
+
+  console.log('isMobileExists',isMobileExists)
+
+  if(isMobileExists){
+    console.log("mobile number is already registered");
+    isUserExistFun(isMobileExists,req,res);
+  }else{
+    
   }
+})
 
-  response.writeHead(302, {
-    'Location': redirect
-  });
-  response.end();
-}).listen(3000);
 
-console.log('Server running at http://127.0.0.1:3000/');
+
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
