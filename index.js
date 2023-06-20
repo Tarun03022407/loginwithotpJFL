@@ -54,6 +54,6 @@ http.createServer(function (request, response) {
     'Location': redirect
   });
   response.end();
-}).listen(4000);
+}).listen(3000);
 
-console.log('Server running at http://127.0.0.1:4000/');
+console.log('Server running at http://127.0.0.1:3000/');
