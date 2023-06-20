@@ -34,7 +34,7 @@ http.createServer(function (request, response) {
   var payload = {
     iat: (new Date().getTime() / 1000),
     jti: uuid.v4(),
- //   name: 'Harshit Srivastava',
+      name: 'Harshit Srivastava',
     email: 'harshit@xoogle.in'
   };
 
